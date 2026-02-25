@@ -2,79 +2,80 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Ultimate Quiz App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro Quiz App</title>
+
 <style>
 body{
-    font-family: Arial;
+    font-family:Arial;
     margin:0;
-    background:linear-gradient(135deg,#4e73df,#1cc88a);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+    background:#f4f6f9;
+    transition:0.3s;
+}
+.dark{
+    background:#121212;
+    color:white;
 }
 .container{
-    background:white;
-    width:95%;
-    max-width:650px;
+    max-width:600px;
+    margin:40px auto;
     padding:20px;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-    text-align:center;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+.dark .container{
+    background:#1e1e1e;
 }
 button{
-    padding:12px;
-    margin:8px 0;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
     width:100%;
+    padding:12px;
+    margin:6px 0;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
 }
-.option{background:#f8f9fc;}
-.option:hover{background:#d1d3e2;}
-.correct{background:#1cc88a !important;color:white;}
-.wrong{background:#e74a3b !important;color:white;}
+.option{background:#e9ecef;}
+.option:hover{background:#ced4da;}
+.correct{background:#28a745 !important;color:white;}
+.wrong{background:#dc3545 !important;color:white;}
 .top-bar{
     display:flex;
     justify-content:space-between;
     font-weight:bold;
 }
-.hidden{display:none;}
+.toggle{
+    position:fixed;
+    top:10px;
+    right:10px;
+    background:black;
+    color:white;
+    padding:6px 10px;
+    border-radius:20px;
+    cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<div class="container" id="main">
+<div class="toggle" onclick="toggleDark()">🌙</div>
 
+<div class="container" id="app">
 <h2>Select Category</h2>
-
 <button onclick="startQuiz('medical')">Medical</button>
 <button onclick="startQuiz('flags')">Flags</button>
 <button onclick="startQuiz('capitals')">Capitals</button>
 <button onclick="startQuiz('animals')">Animals</button>
-
 </div>
 
 <script>
 
 const data = {
-medical: [
-{q:"Normal body temperature?",o:["35°C","37°C","39°C","41°C"],a:1},
-{q:"Human heart has how many chambers?",o:["2","3","4","5"],a:2}
-],
-flags:[
-{q:"Flag of Japan has which symbol?",o:["Star","Circle","Moon","Cross"],a:1},
-{q:"Flag of USA has how many stars?",o:["50","45","52","60"],a:0}
-],
-capitals:[
-{q:"Capital of France?",o:["Paris","Rome","Berlin","Madrid"],a:0},
-{q:"Capital of Pakistan?",o:["Lahore","Islamabad","Karachi","Peshawar"],a:1}
-],
-animals:[
-{q:"Fastest land animal?",o:["Lion","Cheetah","Tiger","Horse"],a:1},
-{q:"Largest animal?",o:["Elephant","Whale","Hippo","Giraffe"],a:1}
-]
+medical: generateQuestions("Medical Question"),
+flags: generateQuestions("Flag Question"),
+capitals: generateQuestions("Capital Question"),
+animals: generateQuestions("Animal Question")
 };
 
 let quiz=[];
@@ -84,19 +85,33 @@ let timer;
 let timeLeft=15;
 let answered=false;
 
+function generateQuestions(title){
+    let arr=[];
+    for(let i=1;i<=300;i++){
+        arr.push({
+            q: title+" "+i+"?",
+            o:["Option A","Option B","Option C","Option D"],
+            a:Math.floor(Math.random()*4)
+        });
+    }
+    return arr;
+}
+
 function startQuiz(category){
-    quiz = shuffle([...data[category]]);
+    quiz = shuffle([...data[category]]).slice(0,10);
     current=0;
     score=0;
-    document.getElementById("main").innerHTML=`
+
+    document.getElementById("app").innerHTML=`
     <div class="top-bar">
         <div>Score: <span id="score">0</span></div>
         <div>Time: <span id="timer">15</span>s</div>
     </div>
-    <h2 id="question"></h2>
+    <h3 id="question"></h3>
     <div id="options"></div>
     <div id="progress"></div>
     <button onclick="nextQuestion()">Next</button>
+    <button onclick="location.reload()">Back</button>
     `;
     loadQuestion();
 }
@@ -110,6 +125,7 @@ function loadQuestion(){
     const q=quiz[current];
     document.getElementById("question").innerText=q.q;
     document.getElementById("progress").innerText="Question "+(current+1)+" / "+quiz.length;
+
     const optDiv=document.getElementById("options");
     optDiv.innerHTML="";
     q.o.forEach((opt,i)=>{
@@ -128,14 +144,15 @@ function selectAnswer(index,btn){
 
     const correctIndex=quiz[current].a;
     const buttons=document.querySelectorAll(".option");
-
     buttons[correctIndex].classList.add("correct");
 
     if(index===correctIndex){
         score++;
         document.getElementById("score").innerText=score;
+        playSound(true);
     }else{
         if(btn) btn.classList.add("wrong");
+        playSound(false);
     }
 }
 
@@ -145,7 +162,10 @@ function nextQuestion(){
     if(current<quiz.length){
         loadQuestion();
     }else{
-        showResult();
+        document.getElementById("app").innerHTML=
+        "<h2>Quiz Finished 🎉</h2>"+
+        "<h3>Your Score: "+score+" / "+quiz.length+"</h3>"+
+        "<button onclick='location.reload()'>Play Again</button>";
     }
 }
 
@@ -160,19 +180,23 @@ function startTimer(){
     },1000);
 }
 
-function showResult(){
-    document.getElementById("main").innerHTML=
-    "<h2>Quiz Finished 🎉</h2>"+
-    "<h3>Your Score: "+score+" / "+quiz.length+"</h3>"+
-    "<button onclick='location.reload()'>Back to Categories</button>";
-}
-
 function shuffle(array){
     for(let i=array.length-1;i>0;i--){
         const j=Math.floor(Math.random()*(i+1));
         [array[i],array[j]]=[array[j],array[i]];
     }
     return array;
+}
+
+function toggleDark(){
+    document.body.classList.toggle("dark");
+}
+
+function playSound(correct){
+    const audio=new Audio(correct ?
+    "https://www.soundjay.com/buttons/sounds/button-3.mp3" :
+    "https://www.soundjay.com/buttons/sounds/button-10.mp3");
+    audio.play();
 }
 
 </script>
