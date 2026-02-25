@@ -3,18 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Quiz App</title>
+<title>Ultimate Quiz App</title>
 
 <style>
 body{
     font-family:Arial;
     margin:0;
     background:#f4f6f9;
-    transition:0.3s;
-}
-.dark{
-    background:#121212;
-    color:white;
 }
 .container{
     max-width:600px;
@@ -23,9 +18,6 @@ body{
     background:white;
     border-radius:12px;
     box-shadow:0 5px 20px rgba(0,0,0,0.1);
-}
-.dark .container{
-    background:#1e1e1e;
 }
 button{
     width:100%;
@@ -44,29 +36,19 @@ button{
     justify-content:space-between;
     font-weight:bold;
 }
-.toggle{
-    position:fixed;
-    top:10px;
-    right:10px;
-    background:black;
-    color:white;
-    padding:6px 10px;
-    border-radius:20px;
-    cursor:pointer;
-}
 </style>
 </head>
 
 <body>
 
-<div class="toggle" onclick="toggleDark()">🌙</div>
-
 <div class="container" id="app">
+
 <h2>Select Category</h2>
-<button onclick="startQuiz('medical')">Medical</button>
-<button onclick="startQuiz('flags')">Flags</button>
-<button onclick="startQuiz('capitals')">Capitals</button>
-<button onclick="startQuiz('animals')">Animals</button>
+<button onclick="selectCount('medical')">Medical</button>
+<button onclick="selectCount('flags')">Flags</button>
+<button onclick="selectCount('capitals')">Capitals</button>
+<button onclick="selectCount('animals')">Animals</button>
+
 </div>
 
 <script>
@@ -84,6 +66,8 @@ let score=0;
 let timer;
 let timeLeft=15;
 let answered=false;
+let selectedCategory="";
+let questionLimit=10;
 
 function generateQuestions(title){
     let arr=[];
@@ -97,8 +81,20 @@ function generateQuestions(title){
     return arr;
 }
 
-function startQuiz(category){
-    quiz = shuffle([...data[category]]).slice(0,10);
+function selectCount(category){
+    selectedCategory = category;
+    document.getElementById("app").innerHTML=`
+    <h2>Select Number of Questions</h2>
+    <button onclick="startQuiz(10)">10 Questions</button>
+    <button onclick="startQuiz(20)">20 Questions</button>
+    <button onclick="startQuiz(30)">30 Questions</button>
+    <button onclick="location.reload()">Back</button>
+    `;
+}
+
+function startQuiz(limit){
+    questionLimit = limit;
+    quiz = shuffle([...data[selectedCategory]]).slice(0,questionLimit);
     current=0;
     score=0;
 
@@ -149,10 +145,8 @@ function selectAnswer(index,btn){
     if(index===correctIndex){
         score++;
         document.getElementById("score").innerText=score;
-        playSound(true);
     }else{
         if(btn) btn.classList.add("wrong");
-        playSound(false);
     }
 }
 
@@ -186,17 +180,6 @@ function shuffle(array){
         [array[i],array[j]]=[array[j],array[i]];
     }
     return array;
-}
-
-function toggleDark(){
-    document.body.classList.toggle("dark");
-}
-
-function playSound(correct){
-    const audio=new Audio(correct ?
-    "https://www.soundjay.com/buttons/sounds/button-3.mp3" :
-    "https://www.soundjay.com/buttons/sounds/button-10.mp3");
-    audio.play();
 }
 
 </script>
