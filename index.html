@@ -1,10 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Quiz Test</title>
+<meta charset="UTF-8">
+<title>Medical Quiz</title>
+<style>
+body{font-family:Arial;text-align:center;background:#f2f2f2}
+.quiz{background:white;width:90%;max-width:700px;margin:30px auto;padding:20px;border-radius:10px}
+button{display:block;width:100%;margin:8px 0;padding:10px}
+</style>
 </head>
 <body>
-    <h1>Quiz App Working ✅</h1>
-    <p>If you see this, GitHub Pages is working.</p>
+
+<div class="quiz">
+<h2 id="question"></h2>
+<div id="options"></div>
+<p id="progress"></p>
+<p id="result"></p>
+<button onclick="nextQuestion()">Next</button>
+</div>
+
+<script>
+
+let quizData=[];
+
+for(let i=1;i<=300;i++){
+quizData.push({
+question:"Medical Question "+i+"?",
+options:["Option A","Option B","Option C","Option D"],
+answer:0
+});
+}
+
+let current=0;
+let score=0;
+
+function load(){
+let q=quizData[current];
+document.getElementById("question").innerText=q.question;
+let html="";
+q.options.forEach((opt,i)=>{
+html+=`<button onclick="check(${i})">${opt}</button>`;
+});
+document.getElementById("options").innerHTML=html;
+document.getElementById("progress").innerText="Question "+(current+1)+" / "+quizData.length;
+}
+
+function check(i){
+if(i===quizData[current].answer) score++;
+}
+
+function nextQuestion(){
+current++;
+if(current>=quizData.length){
+let percent=Math.round((score/quizData.length)*100);
+document.getElementById("question").innerText="Quiz Completed";
+document.getElementById("options").innerHTML="";
+document.getElementById("result").innerText="Score: "+score+" ("+percent+"%)";
+}else{
+load();
+}
+}
+
+load();
+
+</script>
+
 </body>
 </html>
