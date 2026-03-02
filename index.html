@@ -3,65 +3,94 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unit Converter Pro</title>
+<title>Unit Converter Pro+</title>
 
 <style>
+*{
+box-sizing:border-box;
+}
+
 body{
 margin:0;
-font-family:Arial, sans-serif;
-background:linear-gradient(135deg,#1e3c72,#2a5298);
+font-family: 'Segoe UI', sans-serif;
+background: linear-gradient(135deg,#141e30,#243b55);
 display:flex;
 justify-content:center;
 align-items:center;
 min-height:100vh;
+color:white;
 }
 
 .container{
-background:white;
 width:95%;
-max-width:450px;
+max-width:420px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(15px);
 padding:20px;
-border-radius:15px;
-box-shadow:0 15px 35px rgba(0,0,0,0.3);
+border-radius:20px;
+box-shadow:0 20px 40px rgba(0,0,0,0.5);
 }
 
 h2{
 text-align:center;
 margin-bottom:20px;
-color:#333;
+font-weight:600;
 }
 
 select,input{
 width:100%;
-padding:10px;
+padding:12px;
 margin:8px 0;
-border-radius:8px;
-border:1px solid #ccc;
+border-radius:12px;
+border:none;
 font-size:15px;
+outline:none;
+}
+
+input{
+background:white;
+color:black;
+}
+
+select{
+background:white;
+color:black;
 }
 
 button{
 width:100%;
 padding:12px;
-background:#1e3c72;
-color:white;
+margin-top:8px;
 border:none;
-border-radius:8px;
+border-radius:12px;
+background:#00c6ff;
+background:linear-gradient(to right,#0072ff,#00c6ff);
+color:white;
 font-size:16px;
 cursor:pointer;
-margin-top:5px;
+transition:0.3s;
 }
 
 button:hover{
-background:#16325c;
+opacity:0.85;
+}
+
+.swap{
+background:linear-gradient(to right,#ff512f,#dd2476);
 }
 
 .result{
 margin-top:15px;
 font-size:18px;
-font-weight:bold;
+font-weight:600;
 text-align:center;
-color:#1e3c72;
+}
+
+.footer{
+margin-top:15px;
+font-size:12px;
+text-align:center;
+opacity:0.7;
 }
 </style>
 </head>
@@ -69,12 +98,13 @@ color:#1e3c72;
 <body>
 
 <div class="container">
-<h2>Unit Converter Pro</h2>
+
+<h2>Unit Converter Pro+</h2>
 
 <select id="category" onchange="updateUnits()">
 <option value="length">Length</option>
 <option value="weight">Weight</option>
-<option value="temp">Temperature</option>
+<option value="temperature">Temperature</option>
 <option value="speed">Speed</option>
 <option value="time">Time</option>
 <option value="area">Area</option>
@@ -86,50 +116,57 @@ color:#1e3c72;
 <select id="toUnit"></select>
 
 <button onclick="convert()">Convert</button>
+<button class="swap" onclick="swapUnits()">Swap Units</button>
 
 <div class="result" id="result"></div>
+
+<div class="footer">
+Offline • No Ads • Fast & Accurate
+</div>
+
 </div>
 
 <script>
 
-const units = {
+const data = {
 
-length: {
+length:{
 Meter:1,
 Kilometer:1000,
 Centimeter:0.01,
 Millimeter:0.001,
-Mile:1609.34
+Mile:1609.34,
+Yard:0.9144
 },
 
-weight: {
+weight:{
 Kilogram:1,
 Gram:0.001,
 Pound:0.453592,
 Ounce:0.0283495
 },
 
-speed: {
+speed:{
 "Meter/Second":1,
 "Kilometer/Hour":0.277778,
 "Mile/Hour":0.44704
 },
 
-time: {
+time:{
 Second:1,
 Minute:60,
 Hour:3600,
 Day:86400
 },
 
-area: {
+area:{
 "Square Meter":1,
 "Square Kilometer":1000000,
-"Hectare":10000,
-"Acre":4046.86
+Hectare:10000,
+Acre:4046.86
 },
 
-temp: ["Celsius","Fahrenheit","Kelvin"]
+temperature:["Celsius","Fahrenheit","Kelvin"]
 
 };
 
@@ -141,15 +178,15 @@ let to=document.getElementById("toUnit");
 from.innerHTML="";
 to.innerHTML="";
 
-if(cat==="temp"){
-units.temp.forEach(u=>{
+if(cat==="temperature"){
+data.temperature.forEach(u=>{
 from.innerHTML+=`<option>${u}</option>`;
 to.innerHTML+=`<option>${u}</option>`;
 });
 }else{
-for(let key in units[cat]){
-from.innerHTML+=`<option>${key}</option>`;
-to.innerHTML+=`<option>${key}</option>`;
+for(let unit in data[cat]){
+from.innerHTML+=`<option>${unit}</option>`;
+to.innerHTML+=`<option>${unit}</option>`;
 }
 }
 }
@@ -157,7 +194,6 @@ to.innerHTML+=`<option>${key}</option>`;
 updateUnits();
 
 function convert(){
-
 let cat=document.getElementById("category").value;
 let val=parseFloat(document.getElementById("inputValue").value);
 let from=document.getElementById("fromUnit").value;
@@ -168,21 +204,29 @@ document.getElementById("result").innerText="Enter valid number";
 return;
 }
 
-let result=0;
+let result;
 
-if(cat==="temp"){
-if(from==="Celsius" && to==="Fahrenheit") result=(val*9/5)+32;
-else if(from==="Fahrenheit" && to==="Celsius") result=(val-32)*5/9;
-else if(from==="Celsius" && to==="Kelvin") result=val+273.15;
-else if(from==="Kelvin" && to==="Celsius") result=val-273.15;
-else if(from==="Fahrenheit" && to==="Kelvin") result=((val-32)*5/9)+273.15;
-else if(from==="Kelvin" && to==="Fahrenheit") result=((val-273.15)*9/5)+32;
+if(cat==="temperature"){
+if(from==="Celsius"&&to==="Fahrenheit") result=(val*9/5)+32;
+else if(from==="Fahrenheit"&&to==="Celsius") result=(val-32)*5/9;
+else if(from==="Celsius"&&to==="Kelvin") result=val+273.15;
+else if(from==="Kelvin"&&to==="Celsius") result=val-273.15;
+else if(from==="Fahrenheit"&&to==="Kelvin") result=((val-32)*5/9)+273.15;
+else if(from==="Kelvin"&&to==="Fahrenheit") result=((val-273.15)*9/5)+32;
 else result=val;
 }else{
-result = val * units[cat][from] / units[cat][to];
+result=val * data[cat][from] / data[cat][to];
 }
 
 document.getElementById("result").innerText="Result: "+result.toFixed(6);
+}
+
+function swapUnits(){
+let from=document.getElementById("fromUnit");
+let to=document.getElementById("toUnit");
+let temp=from.value;
+from.value=to.value;
+to.value=temp;
 }
 
 </script>
