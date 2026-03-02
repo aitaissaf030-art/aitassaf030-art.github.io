@@ -2,23 +2,82 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Unit Converter</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit Converter Pro</title>
+
 <style>
-body { font-family: Arial; padding:20px; background:#f2f2f2; }
-h2 { color:#333; }
-select,input { padding:8px; margin:5px 0; width:100%; }
-button { padding:10px; width:100%; background:#2196F3; color:white; border:none; }
-.result { margin-top:15px; font-weight:bold; }
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#1e3c72,#2a5298);
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+}
+
+.container{
+background:white;
+width:95%;
+max-width:450px;
+padding:20px;
+border-radius:15px;
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+color:#333;
+}
+
+select,input{
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:15px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#1e3c72;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+margin-top:5px;
+}
+
+button:hover{
+background:#16325c;
+}
+
+.result{
+margin-top:15px;
+font-size:18px;
+font-weight:bold;
+text-align:center;
+color:#1e3c72;
+}
 </style>
 </head>
+
 <body>
 
-<h2>Unit Converter</h2>
+<div class="container">
+<h2>Unit Converter Pro</h2>
 
-<select id="category">
+<select id="category" onchange="updateUnits()">
 <option value="length">Length</option>
 <option value="weight">Weight</option>
 <option value="temp">Temperature</option>
+<option value="speed">Speed</option>
+<option value="time">Time</option>
+<option value="area">Area</option>
 </select>
 
 <input type="number" id="inputValue" placeholder="Enter value">
@@ -29,62 +88,101 @@ button { padding:10px; width:100%; background:#2196F3; color:white; border:none;
 <button onclick="convert()">Convert</button>
 
 <div class="result" id="result"></div>
+</div>
 
 <script>
 
 const units = {
-length: ["Meter","Kilometer","Centimeter"],
-weight: ["Kilogram","Gram","Pound"],
+
+length: {
+Meter:1,
+Kilometer:1000,
+Centimeter:0.01,
+Millimeter:0.001,
+Mile:1609.34
+},
+
+weight: {
+Kilogram:1,
+Gram:0.001,
+Pound:0.453592,
+Ounce:0.0283495
+},
+
+speed: {
+"Meter/Second":1,
+"Kilometer/Hour":0.277778,
+"Mile/Hour":0.44704
+},
+
+time: {
+Second:1,
+Minute:60,
+Hour:3600,
+Day:86400
+},
+
+area: {
+"Square Meter":1,
+"Square Kilometer":1000000,
+"Hectare":10000,
+"Acre":4046.86
+},
+
 temp: ["Celsius","Fahrenheit","Kelvin"]
+
 };
 
 function updateUnits(){
-let cat = document.getElementById("category").value;
-let from = document.getElementById("fromUnit");
-let to = document.getElementById("toUnit");
+let cat=document.getElementById("category").value;
+let from=document.getElementById("fromUnit");
+let to=document.getElementById("toUnit");
+
 from.innerHTML="";
 to.innerHTML="";
-units[cat].forEach(u=>{
+
+if(cat==="temp"){
+units.temp.forEach(u=>{
 from.innerHTML+=`<option>${u}</option>`;
 to.innerHTML+=`<option>${u}</option>`;
 });
+}else{
+for(let key in units[cat]){
+from.innerHTML+=`<option>${key}</option>`;
+to.innerHTML+=`<option>${key}</option>`;
+}
+}
 }
 
-document.getElementById("category").addEventListener("change",updateUnits);
 updateUnits();
 
 function convert(){
+
 let cat=document.getElementById("category").value;
 let val=parseFloat(document.getElementById("inputValue").value);
 let from=document.getElementById("fromUnit").value;
 let to=document.getElementById("toUnit").value;
+
+if(isNaN(val)){
+document.getElementById("result").innerText="Enter valid number";
+return;
+}
+
 let result=0;
 
-if(cat==="length"){
-if(from==="Meter"&&to==="Kilometer") result=val/1000;
-else if(from==="Kilometer"&&to==="Meter") result=val*1000;
-else if(from==="Meter"&&to==="Centimeter") result=val*100;
-else if(from==="Centimeter"&&to==="Meter") result=val/100;
-else result=val;
-}
-
-if(cat==="weight"){
-if(from==="Kilogram"&&to==="Gram") result=val*1000;
-else if(from==="Gram"&&to==="Kilogram") result=val/1000;
-else if(from==="Kilogram"&&to==="Pound") result=val*2.20462;
-else if(from==="Pound"&&to==="Kilogram") result=val/2.20462;
-else result=val;
-}
-
 if(cat==="temp"){
-if(from==="Celsius"&&to==="Fahrenheit") result=(val*9/5)+32;
-else if(from==="Fahrenheit"&&to==="Celsius") result=(val-32)*5/9;
-else if(from==="Celsius"&&to==="Kelvin") result=val+273.15;
-else if(from==="Kelvin"&&to==="Celsius") result=val-273.15;
+if(from==="Celsius" && to==="Fahrenheit") result=(val*9/5)+32;
+else if(from==="Fahrenheit" && to==="Celsius") result=(val-32)*5/9;
+else if(from==="Celsius" && to==="Kelvin") result=val+273.15;
+else if(from==="Kelvin" && to==="Celsius") result=val-273.15;
+else if(from==="Fahrenheit" && to==="Kelvin") result=((val-32)*5/9)+273.15;
+else if(from==="Kelvin" && to==="Fahrenheit") result=((val-273.15)*9/5)+32;
 else result=val;
+}else{
+result = val * units[cat][from] / units[cat][to];
 }
 
-document.getElementById("result").innerText="Result: "+result;
+document.getElementById("result").innerText="Result: "+result.toFixed(6);
 }
 
 </script>
