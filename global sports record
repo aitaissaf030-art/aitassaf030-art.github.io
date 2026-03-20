@@ -1,0 +1,470 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Global Sports Records & Match Archive – VIP</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(145deg, #0a0c0f 0%, #1a1e24 100%);
+            color: #e5e9f0;
+            min-height: 100vh;
+            padding: 20px 16px 40px;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        /* header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f5e7c8, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            letter-spacing: 1px;
+        }
+        .header h1 i {
+            margin-right: 12px;
+            color: #d4af37;
+            text-shadow: none;
+        }
+        .header .sub {
+            font-size: 1.1rem;
+            color: #8f9bb3;
+            background: rgba(20, 25, 35, 0.8);
+            backdrop-filter: blur(8px);
+            display: inline-block;
+            padding: 8px 28px;
+            border-radius: 50px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            margin-top: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+        .search-bar {
+            display: flex;
+            max-width: 500px;
+            margin: 30px auto 0;
+            background: #1e232c;
+            border-radius: 60px;
+            border: 1px solid #333a44;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+        .search-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 16px 22px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        .search-bar input::placeholder {
+            color: #6f7a8a;
+        }
+        .search-bar button {
+            background: #d4af37;
+            border: none;
+            padding: 0 28px;
+            color: #0a0c0f;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+        .search-bar button:hover {
+            background: #e5c158;
+        }
+        /* vip banner */
+        .vip-badge {
+            display: inline-block;
+            background: linear-gradient(145deg, #d4af37, #b3922c);
+            color: #0a0c0f;
+            font-weight: 700;
+            padding: 4px 20px;
+            border-radius: 30px;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 15px #d4af37;
+        }
+        /* tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 40px 0 30px;
+        }
+        .tab-btn {
+            background: transparent;
+            border: 1px solid #3a4452;
+            color: #aab7c4;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn i {
+            margin-right: 8px;
+        }
+        .tab-btn.active {
+            background: #d4af37;
+            border-color: #d4af37;
+            color: #0a0c0f;
+            box-shadow: 0 0 20px #d4af37;
+        }
+        .tab-content {
+            display: none;
+            animation: fade 0.4s ease;
+        }
+        .tab-content.active-content {
+            display: block;
+        }
+        @keyframes fade {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+        /* cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        .card {
+            background: rgba(26, 32, 42, 0.8);
+            backdrop-filter: blur(4px);
+            border-radius: 28px;
+            padding: 22px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.7);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: #d4af37;
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
+        }
+        .card .sport-icon {
+            font-size: 2.5rem;
+            color: #d4af37;
+            margin-bottom: 15px;
+        }
+        .card h3 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #f0e6d2;
+        }
+        .card .record-detail {
+            font-size: 1rem;
+            color: #b0c0d0;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card .record-detail i {
+            width: 24px;
+            color: #d4af37;
+        }
+        .card .highlight {
+            color: #d4af37;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .match-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #2f3640;
+        }
+        .match-row:last-child {
+            border-bottom: none;
+        }
+        .match-teams {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .match-score {
+            background: #2a313c;
+            padding: 5px 15px;
+            border-radius: 30px;
+            color: #d4af37;
+            font-weight: 700;
+        }
+        .match-league {
+            font-size: 0.85rem;
+            color: #8f9bb3;
+            margin-top: 4px;
+        }
+        .record-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .record-table th {
+            text-align: left;
+            padding: 12px 8px;
+            color: #d4af37;
+            font-weight: 600;
+            border-bottom: 2px solid #3a4452;
+        }
+        .record-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #2a313c;
+        }
+        .record-table tr:last-child td {
+            border-bottom: none;
+        }
+        .flag {
+            font-size: 1.3rem;
+            margin-right: 8px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 25px;
+            border-top: 1px solid #2f3640;
+            color: #8f9bb3;
+            font-size: 0.9rem;
+        }
+        .footer a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 2rem; }
+            .tabs .tab-btn { padding: 8px 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="vip-badge"><i class="fas fa-crown"></i> VIP ARCHIVE <i class="fas fa-crown"></i></div>
+            <h1><i class="fas fa-trophy"></i> Global Sports Records <br><span style="font-size: 1.8rem;">& Match Archive</span></h1>
+            <div class="sub">The ultimate collection – world records, live results & historical data</div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for sport, athlete or team...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'records')"><i class="fas fa-chart-line"></i> World Records</button>
+            <button class="tab-btn" onclick="switchTab(event, 'matches')"><i class="fas fa-futbol"></i> Recent Matches</button>
+            <button class="tab-btn" onclick="switchTab(event, 'legends')"><i class="fas fa-star"></i> All‑Time Greats</button>
+            <button class="tab-btn" onclick="switchTab(event, 'upcoming')"><i class="fas fa-calendar-alt"></i> Upcoming Events</button>
+        </div>
+
+        <!-- Tab: World Records -->
+        <div id="records" class="tab-content active-content">
+            <div class="card-grid">
+                <!-- Athletics -->
+                <div class="card">
+                    <div class="sport-icon"><i class="fas fa-running"></i></div>
+                    <h3>Athletics – Men</h3>
+                    <div class="record-detail"><i class="fas fa-stopwatch"></i> 100m: <span class="highlight">9.58</span> Usain Bolt (JAM) – 2009</div>
+                    <div class="record-detail"><i class="fas fa-stopwatch"></i> 200m: <span class="highlight">19.19</span> Usain Bolt (JAM) – 2009</div>
+                    <div class="record-detail"><i class="fas fa-stopwatch"></i> 400m: <span class="highlight">43.03</span> Wayde van Niekerk (RSA) – 2016</div>
+                    <div class="record-detail"><i class="fas fa-long-arrow-alt-up"></i> High Jump: <span class="highlight">2.45m</span> Javier Sotomayor (CUB) – 1993</div>
+                </div>
+                <!-- Athletics Women -->
+                <div class="card">
+                    <div class="sport-icon"><i class="fas fa-running"></i></div>
+                    <h3>Athletics – Women</h3>
+                    <div class="record-detail"><i class="fas fa-stopwatch"></i> 100m: <span class="highlight">10.49</span> Florence Griffith‑Joyner (USA) – 1988</div>
+                    <div class="record-detail"><i class="fas fa-stopwatch"></i> 200m: <span class="highlight">21.34</span> Florence Griffith‑Joyner (USA) – 1988</div>
+                    <div class="record-detail"><i class="fas fa-stopwatch"></i> 400m: <span class="highlight">47.60</span> Marita Koch (GDR) – 1985</div>
+                    <div class="record-detail"><i class="fas fa-long-arrow-alt-up"></i> High Jump: <span class="highlight">2.09m</span> Stefka Kostadinova (BUL) – 1987</div>
+                </div>
+                <!-- Swimming -->
+                <div class="card">
+                    <div class="sport-icon"><i class="fas fa-swimmer"></i></div>
+                    <h3>Swimming – Men</h3>
+                    <div class="record-detail"><i class="fas fa-water"></i> 50m Free: <span class="highlight">20.91</span> César Cielo (BRA) – 2009</div>
+                    <div class="record-detail"><i class="fas fa-water"></i> 100m Free: <span class="highlight">46.86</span> David Popovici (ROU) – 2022</div>
+                    <div class="record-detail"><i class="fas fa-water"></i> 200m Free: <span class="highlight">1:42.00</span> Paul Biedermann (GER) – 2009</div>
+                </div>
+                <!-- Swimming Women -->
+                <div class="card">
+                    <div class="sport-icon"><i class="fas fa-swimmer"></i></div>
+                    <h3>Swimming – Women</h3>
+                    <div class="record-detail"><i class="fas fa-water"></i> 50m Free: <span class="highlight">23.61</span> Sarah Sjöström (SWE) – 2023</div>
+                    <div class="record-detail"><i class="fas fa-water"></i> 100m Free: <span class="highlight">51.71</span> Sarah Sjöström (SWE) – 2017</div>
+                    <div class="record-detail"><i class="fas fa-water"></i> 200m Free: <span class="highlight">1:52.98</span> Federica Pellegrini (ITA) – 2009</div>
+                </div>
+                <!-- Football (Soccer) records -->
+                <div class="card">
+                    <div class="sport-icon"><i class="fas fa-futbol"></i></div>
+                    <h3>Football – Most Goals (Career)</h3>
+                    <div class="record-detail"><i class="fas fa-crown"></i> <span class="highlight">807</span> Josef Bican (1930s–50s) *unofficial</div>
+                    <div class="record-detail"><i class="fas fa-crown"></i> <span class="highlight">805</span> Cristiano Ronaldo (2002– )</div>
+                    <div class="record-detail"><i class="fas fa-crown"></i> <span class="highlight">759</span> Lionel Messi (2004– )</div>
+                </div>
+                <!-- Basketball -->
+                <div class="card">
+                    <div class="sport-icon"><i class="fas fa-basketball-ball"></i></div>
+                    <h3>NBA – All‑Time Scoring</h3>
+                    <div class="record-detail"><i class="fas fa-crown"></i> <span class="highlight">38,387</span> LeBron James</div>
+                    <div class="record-detail"><i class="fas fa-crown"></i> <span class="highlight">36,928</span> Kareem Abdul‑Jabbar</div>
+                    <div class="record-detail"><i class="fas fa-crown"></i> <span class="highlight">33,643</span> Karl Malone</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Recent Matches -->
+        <div id="matches" class="tab-content">
+            <div class="card">
+                <h3><i class="fas fa-calendar-check"></i> Yesterday's Highlights</h3>
+                <div class="match-row">
+                    <div>
+                        <div class="match-teams">Real Madrid <span class="flag">🇪🇸</span>  vs  <span class="flag">🇩🇪</span> Bayern Munich</div>
+                        <div class="match-league">UEFA Champions League – Semi-final 1st leg</div>
+                    </div>
+                    <div class="match-score">3 : 2</div>
+                </div>
+                <div class="match-row">
+                    <div>
+                        <div class="match-teams">Lakers <span class="flag">🇺🇸</span>  vs  <span class="flag">🇺🇸</span> Warriors</div>
+                        <div class="match-league">NBA Playoffs – Conference Semis</div>
+                    </div>
+                    <div class="match-score">112 : 106</div>
+                </div>
+                <div class="match-row">
+                    <div>
+                        <div class="match-teams">India <span class="flag">🇮🇳</span>  vs  <span class="flag">🇦🇺</span> Australia</div>
+                        <div class="match-league">Cricket – 3rd ODI</div>
+                    </div>
+                    <div class="match-score">289/7 : 285</div>
+                </div>
+                <div class="match-row">
+                    <div>
+                        <div class="match-teams">PSG <span class="flag">🇫🇷</span>  vs  <span class="flag">🇫🇷</span> Marseille</div>
+                        <div class="match-league">Ligue 1</div>
+                    </div>
+                    <div class="match-score">2 : 0</div>
+                </div>
+            </div>
+            <div class="card" style="margin-top:20px;">
+                <h3><i class="fas fa-clock"></i> Live / Just Finished</h3>
+                <div class="match-row">
+                    <div>
+                        <div class="match-teams">Red Bull Racing <span class="flag">🇦🇹</span>  vs  <span class="flag">🇳🇱</span> Ferrari</div>
+                        <div class="match-league">Formula 1 – Monaco GP (Final laps)</div>
+                    </div>
+                    <div class="match-score">LAP 75/78</div>
+                </div>
+                <div class="match-row">
+                    <div>
+                        <div class="match-teams">Djokovic <span class="flag">🇷🇸</span>  vs  <span class="flag">🇪🇸</span> Alcaraz</div>
+                        <div class="match-league">French Open – Quarterfinal</div>
+                    </div>
+                    <div class="match-score">6‑3, 4‑6, 3‑3 (on serve)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: All‑Time Greats -->
+        <div id="legends" class="tab-content">
+            <div class="card-grid">
+                <div class="card">
+                    <h3><i class="fas fa-medal"></i> Athletics</h3>
+                    <div class="record-detail"><i class="fas fa-user"></i> Usain Bolt – 8× Olympic gold, 11× World champ</div>
+                    <div class="record-detail"><i class="fas fa-user"></i> Carl Lewis – 9× Olympic gold, 8× World gold</div>
+                    <div class="record-detail"><i class="fas fa-user"></i> Jackie Joyner‑Kersee – 6× Olympic medalist</div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-medal"></i> Football</h3>
+                    <div class="record-detail"><i class="fas fa-user"></i> Pelé – 3× World Cup winner</div>
+                    <div class="record-detail"><i class="fas fa-user"></i> Diego Maradona – "Goal of the Century"</div>
+                    <div class="record-detail"><i class="fas fa-user"></i> Lionel Messi – 7× Ballon d'Or, World Cup 2022</div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-medal"></i> Basketball</h3>
+                    <div class="record-detail"><i class="fas fa-user"></i> Michael Jordan – 6× NBA champ, 5× MVP</div>
+                    <div class="record-detail"><i class="fas fa-user"></i> LeBron James – 4× champ, all‑time scorer</div>
+                    <div class="record-detail"><i class="fas fa-user"></i> Kareem Abdul‑Jabbar – 6× MVP, 6× champ</div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-medal"></i> Swimming</h3>
+                    <div class="record-detail"><i class="fas fa-user"></i> Michael Phelps – 23× Olympic gold</div>
+                    <div class="record-detail"><i class="fas fa-user"></i> Mark Spitz – 7× gold (1972)</div>
+                    <div class="record-detail"><i class="fas fa-user"></i> Katie Ledecky – 7× Olympic gold, world records</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Upcoming Events -->
+        <div id="upcoming" class="tab-content">
+            <div class="card">
+                <h3><i class="fas fa-calendar-week"></i> Next 7 Days</h3>
+                <table class="record-table">
+                    <tr><th>Date</th><th>Event</th><th>Location</th></tr>
+                    <tr><td>May 25</td><td>UEFA Champions League Final</td><td>London</td></tr>
+                    <tr><td>May 26</td><td>Monaco Grand Prix – F1</td><td>Monte Carlo</td></tr>
+                    <tr><td>May 27</td><td>French Open – Round of 16</td><td>Paris</td></tr>
+                    <tr><td>May 28</td><td>NBA Finals Game 1</td><td>Boston/Denver</td></tr>
+                    <tr><td>May 29</td><td>ICC World Cup Warm‑up</td><td>Barbados</td></tr>
+                </table>
+            </div>
+            <div class="card" style="margin-top:20px;">
+                <h3><i class="fas fa-ticket-alt"></i> VIP Ticket Access</h3>
+                <p style="margin-bottom:15px;">Get priority access to the biggest sporting events worldwide. Contact our concierge for exclusive hospitality packages.</p>
+                <div style="background:#2a313c; padding:15px; border-radius:20px; text-align:center;">
+                    <i class="fas fa-phone-alt" style="color:#d4af37; margin-right:8px;"></i> +1 800 555 0199 (24/7 VIP line)
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><i class="fas fa-database"></i> Global Sports Records & Match Archive – Est. 2025</p>
+            <p>Data updates every 15 minutes. <a href="#">Become a VIP member</a> for real‑time alerts.</p>
+            <p style="font-size:0.8rem; margin-top:15px;">All records are for demonstration purposes. For accurate official statistics, visit respective sport governing bodies.</p>
+        </div>
+    </div>
+
+    <!-- Simple tab switching script -->
+    <script>
+        function switchTab(event, tabId) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active-content'));
+            
+            // Add active class to clicked button and corresponding content
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active-content');
+        }
+    </script>
+</body>
+</html>
